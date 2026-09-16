@@ -83,7 +83,7 @@ and temporary PHP array data sources without using a database.
 
 ## Live Application
 
-[Open the hosted SimplePOS application](https://YOUR-SERVICE.onrender.com/)
+[Open the hosted SimplePOS application](https://simplepos-jobymiranda.onrender.com/)
 
 ## Data Source
 
