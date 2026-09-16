@@ -6,10 +6,10 @@ and temporary PHP array data sources without using a database.
 
 ## Student Information
 
-- Name: YOUR FULL NAME
-- Course and section: YOUR COURSE AND SECTION
+- Name: JOBY MAE M. MIRANDA
+- Course and section: BSITBA - TB32
 - Subject: IT0049 - Web System Technologies
-- Instructor: YOUR INSTRUCTOR'S NAME
+- Instructor: MR. VON ERICK MAGBITANG
 - Exercise: Module 1 - CodeIgniter Foundations
 
 ## Features
