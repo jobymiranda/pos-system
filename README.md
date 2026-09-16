@@ -81,7 +81,9 @@ and temporary PHP array data sources without using a database.
    php spark serve
    ```
 
-7. Visit `[http://localhost:8080](https://simplepos-jobymiranda.onrender.com/)`.
+## Live Application
+
+[Open the hosted SimplePOS application](https://YOUR-SERVICE.onrender.com/)
 
 ## Data Source
 
