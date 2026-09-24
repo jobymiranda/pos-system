@@ -6,7 +6,7 @@ RUN apt-get update \
         libonig-dev \
         libzip-dev \
         unzip \
-    && docker-php-ext-install intl mbstring zip \
+    && docker-php-ext-install intl mbstring zip mysqli pdo_mysql \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
 

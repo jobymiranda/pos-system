@@ -4,8 +4,7 @@
     <h1>Customer Accounts</h1>
 
     <p>
-        Customer records currently stored in a temporary PHP array.
-    </p>
+Customer records retrieved from the MySQL database.    </p>
 </section>
 
 <section class="content-panel">

@@ -4,7 +4,7 @@
     <h1>User Accounts</h1>
 
     <p>
-        Staff records currently stored in a temporary PHP array.
+        Staff records retrieved from the MySQL database.
     </p>
 </section>
 
@@ -19,7 +19,7 @@
                         <th scope="col">No.</th>
                         <th scope="col">Username</th>
                         <th scope="col">Full Name</th>
-                        <th scope="col">Role</th>
+                        <th scope="col">Created At</th>
                     </tr>
                 </thead>
 
@@ -37,9 +37,7 @@
                             </td>
 
                             <td>
-                                <span class="role-badge">
-                                    <?= esc($user['role']) ?>
-                                </span>
+                                <?= esc($user['created_at']) ?>
                             </td>
                         </tr>
                     <?php endforeach ?>

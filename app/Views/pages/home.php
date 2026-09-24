@@ -42,7 +42,7 @@
         <h2>User Accounts</h2>
 
         <p>
-            View staff usernames, full names, and assigned roles.
+          View staff usernames, full names, and account creation dates.
         </p>
 
         <a href="<?= site_url('users') ?>">

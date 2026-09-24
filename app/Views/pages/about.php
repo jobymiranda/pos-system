@@ -32,12 +32,17 @@
         <li>
             <strong>Views</strong> create the HTML shown in the browser.
         </li>
+        
+        <li>
+             <strong>Models</strong> retrieve records from MySQL.
+        </li>
     </ul>
 
-    <h2>Temporary data</h2>
+     <h2>Database-backed data</h2>
 
     <p>
-        Customer and user records are temporarily stored in PHP
-        arrays. A database can replace these arrays in a future module.
+    Customer and user records are stored in a MySQL database.
+    CodeIgniter Models retrieve the records and pass them to
+    the application views.
     </p>
 </section>
