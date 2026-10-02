@@ -11,7 +11,7 @@ and user account listings.
 - Course and section: BSITBA - TB32
 - Subject: IT0049 - Web System Technologies
 - Instructor: MR. VON ERICK MAGBITANG
-- Exercise: Technical Formative Assessment 2 - From Arrays to a Real Database
+- Exercise: Technical Formative Assessment 3 - Making It Editable: Forms, Validation, and File Upload
 
 ## Features
 
@@ -25,15 +25,35 @@ and user account listings.
 - Five user/staff sample records
 - Reusable navigation, header, and footer views
 - Responsive account tables
+- Validated New Customer form
+- Validated New User form
+- Customer editing workflow
+- User editing workflow
+- Unique username validation
+- Form error messages with preserved input
+- Optional JPG and PNG avatar upload
+- Maximum avatar upload size of 2 MB
+- Prepared 300 × 300 avatar thumbnails
+- Placeholder avatar when no image is uploaded
+- MySQL-backed customer and user records
+- CSRF-protected forms
 
 ## Routes
 
-| Method | URL | Controller |
+| Method | URL | Description |
 |---|---|---|
-| GET | `/` | `Pages::index` |
-| GET | `/about` | `Pages::about` |
-| GET | `/customers` | `Customers::index` |
-| GET | `/users` | `Users::index` |
+| GET | `/` | Landing page |
+| GET | `/about` | About page |
+| GET | `/customers` | Customer listing |
+| GET | `/customers/new` | New Customer form |
+| POST | `/customers` | Insert a customer |
+| GET | `/customers/{id}/edit` | Edit Customer form |
+| POST | `/customers/{id}` | Update a customer |
+| GET | `/users` | User listing |
+| GET | `/users/new` | New User form |
+| POST | `/users` | Insert a user |
+| GET | `/users/{id}/edit` | Edit User and avatar form |
+| POST | `/users/{id}` | Update user and avatar |
 
 ## Technologies
 
@@ -132,3 +152,9 @@ https://github.com/jobymiranda/pos-system
 [Open the existing hosted SimplePOS application](https://simplepos-jobymiranda.onrender.com/)
 
 The TFA2 MySQL-backed version is configured for local execution. The existing hosted link displays the earlier version because Railway deployment was skipped.
+
+## Submission Note
+
+This assessment is configured for local execution using XAMPP and
+MySQL. Hosting is not required based on the instructor's submission
+instructions.

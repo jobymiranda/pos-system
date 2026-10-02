@@ -1,11 +1,23 @@
-<section class="page-heading">
-    <p class="eyebrow">Account Management</p>
+<section class="page-heading page-heading-with-action">
+    <div>
+        <p class="eyebrow">Account Management</p>
+        <h1>Customer Accounts</h1>
 
-    <h1>Customer Accounts</h1>
+        <p>
+            Create and maintain customer records stored in MySQL.
+        </p>
+    </div>
 
-    <p>
-Customer records retrieved from the MySQL database.    </p>
+    <a class="button button-solid" href="<?= site_url('customers/new') ?>">
+        Add Customer
+    </a>
 </section>
+
+<?php if ($message = session()->getFlashdata('success')): ?>
+    <div class="alert alert-success" role="status">
+        <?= esc($message) ?>
+    </div>
+<?php endif ?>
 
 <section class="content-panel">
     <?php if ($customers !== []): ?>
@@ -19,6 +31,7 @@ Customer records retrieved from the MySQL database.    </p>
                         <th scope="col">Full Name</th>
                         <th scope="col">Email Address</th>
                         <th scope="col">Phone Number</th>
+                        <th scope="col">Action</th>
                     </tr>
                 </thead>
 
@@ -27,20 +40,34 @@ Customer records retrieved from the MySQL database.    </p>
                         <tr>
                             <td><?= $index + 1 ?></td>
 
-                            <td>
-                                <?= esc($customer['full_name']) ?>
-                            </td>
+                            <td><?= esc($customer['full_name']) ?></td>
 
                             <td>
                                 <a
-                                    href="mailto:<?= esc($customer['email']) ?>"
+                                    href="mailto:<?= esc(
+                                        $customer['email'],
+                                        'attr'
+                                    ) ?>"
                                 >
                                     <?= esc($customer['email']) ?>
                                 </a>
                             </td>
 
                             <td>
-                                <?= esc($customer['phone']) ?>
+                                <?= esc($customer['phone'] ?? 'Not provided') ?>
+                            </td>
+
+                            <td>
+                                <a
+                                    class="table-action"
+                                    href="<?= site_url(
+                                        'customers/'
+                                        . $customer['id']
+                                        . '/edit'
+                                    ) ?>"
+                                >
+                                    Edit
+                                </a>
                             </td>
                         </tr>
                     <?php endforeach ?>

@@ -20,8 +20,7 @@ abstract class BaseController extends Controller
         LoggerInterface $logger
     ) {
         // Load the URL helper for all controllers.
-        $this->helpers = ['url'];
-
+        $this->helpers = ['url', 'form'];
         // Do not edit this line.
         parent::initController($request, $response, $logger);
 
