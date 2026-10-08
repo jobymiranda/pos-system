@@ -1,160 +1,134 @@
 # SimplePOS
 
-SimplePOS is a four-page Point-of-Sale website developed using
-CodeIgniter 4 and MySQL. It demonstrates routing, controllers,
-reusable views, Models, Query Builder, and database-backed customer
-and user account listings.
+SimplePOS is a secure customer and staff account management system
+developed using CodeIgniter 4, PHP, and MySQL for IT0049 Web System
+Technologies.
 
-## Student Information
+The project demonstrates the Model-View-Controller architecture,
+database-backed record management, validated forms, file uploads,
+sessions, authentication, and protected application routes.
 
-- Name: JOBY MAE M. MIRANDA
-- Course and section: BSITBA - TB32
-- Subject: IT0049 - Web System Technologies
-- Instructor: MR. VON ERICK MAGBITANG
-- Exercise: Technical Formative Assessment 3 - Making It Editable: Forms, Validation, and File Upload
+## Project Status
 
-## Features
+This repository contains the completed continuation of the following
+laboratory activities:
 
-- Landing page
-- About page
-- Customer Accounts page backed by MySQL
-- User Accounts page backed by MySQL
-- CodeIgniter CustomerModel and UserModel
-- Query Builder record retrieval through `findAll()`
-- Five customer sample records
-- Five user/staff sample records
-- Reusable navigation, header, and footer views
-- Responsive account tables
-- Validated New Customer form
-- Validated New User form
-- Customer editing workflow
-- User editing workflow
-- Unique username validation
-- Form error messages with preserved input
-- Optional JPG and PNG avatar upload
-- Maximum avatar upload size of 2 MB
-- Prepared 300 × 300 avatar thumbnails
-- Placeholder avatar when no image is uploaded
-- MySQL-backed customer and user records
-- CSRF-protected forms
+- CodeIgniter routing, controllers, and views
+- Database-backed customer and user accounts
+- Create and edit forms
+- Server-side validation
+- User avatar upload and image preparation
+- Sessions and authentication
+- Protected routes and secure logout
 
-## Routes
+## Main Features
 
-| Method | URL | Description |
-|---|---|---|
-| GET | `/` | Landing page |
-| GET | `/about` | About page |
-| GET | `/customers` | Customer listing |
-| GET | `/customers/new` | New Customer form |
-| POST | `/customers` | Insert a customer |
-| GET | `/customers/{id}/edit` | Edit Customer form |
-| POST | `/customers/{id}` | Update a customer |
-| GET | `/users` | User listing |
-| GET | `/users/new` | New User form |
-| POST | `/users` | Insert a user |
-| GET | `/users/{id}/edit` | Edit User and avatar form |
-| POST | `/users/{id}` | Update user and avatar |
+### Authentication and Security
 
-## Technologies
+- Database-backed staff login
+- Secure password hashing using `password_hash()`
+- Password verification using `password_verify()`
+- Server-side session authentication
+- Session ID regeneration after login and logout
+- Authentication filters for protected pages
+- Guest filter for the login page
+- CSRF protection on submitted forms
+- Generic login errors that do not reveal which credential was wrong
+- Secure POST-based logout
 
-- PHP 8.2 or newer
+### Customer Account Management
+
+- Display customer records from MySQL
+- Add new customer accounts
+- Edit existing customer accounts
+- Validate required customer information
+- Validate email addresses
+- Preserve submitted form values when validation fails
+- Display clear validation and success messages
+
+### User Account Management
+
+- Display staff accounts from MySQL
+- Create new staff accounts
+- Enforce unique usernames
+- Assign account roles
+- Edit existing staff information
+- Create securely hashed passwords
+- Change passwords without displaying the existing password hash
+- Preserve the current password when the password field is left blank
+- Update the active session when the logged-in user edits their account
+
+### Avatar Upload
+
+- Optional user profile-picture upload
+- JPG and PNG validation
+- Maximum file size of 2 MB
+- Image validation using CodeIgniter
+- Display-ready 400 × 400 avatar preparation
+- Randomized filenames
+- Only the generated filename is stored in MySQL
+- Replacement of an existing avatar
+- Placeholder avatar when no profile picture is available
+
+### User Interface
+
+- Responsive professional dashboard
+- Secure-session status display
+- Consistent navigation
+- Logged-in user identity and role
+- Professional customer and user tables
+- Responsive account forms
+- Clear alerts and validation feedback
+- Mobile-friendly layouts
+
+## Technologies Used
+
+- PHP 8.2+
 - CodeIgniter 4
-- MySQL
-- Composer
-- Docker
+- MySQL or MariaDB
 - HTML5
 - CSS3
+- JavaScript
+- Composer
+- XAMPP
+- Git and GitHub
 
-## Local Setup
-
-1. Clone the repository:
-
-   ```bash
-   git clone YOUR-REPOSITORY-URL
-   ```
-
-2. Enter the project:
-
-   ```bash
-   cd pos-system
-   ```
-
-3. Install dependencies:
-
-   ```bash
-   composer install
-   ```
-
-4. Start Apache and MySQL using XAMPP.
-
-5. Open phpMyAdmin and create a database named `pos_system`.
-
-6. Import the database export:
-
-   ```text
-   database/pos_system.sql
-   ```
-
-7. Copy the environment template:
-
-   ```powershell
-   Copy-Item env .env
-   ```
-
-8. Open `.env` and configure it:
-
-   ```ini
-   CI_ENVIRONMENT = development
-   app.baseURL = 'http://localhost:8080/'
-
-   database.default.hostname = localhost
-   database.default.database = pos_system
-   database.default.username = root
-   database.default.password =
-   database.default.DBDriver = MySQLi
-   database.default.DBPrefix =
-   database.default.port = 3306
-   ```
-
-9. Start the application:
-
-   ```powershell
-   php spark serve
-   ```
-
-10. Open the application in your browser:
-
-   ```text
-   http://localhost:8080
-   ```
-
-## Database
-
-This version uses a MySQL database named `pos_system`.
-
-The database contains the following tables:
-
-- `customers`
-- `users`
-
-A complete database export is included at:
+## Project Structure
 
 ```text
-database/pos_system.sql
-```
-
-## Repository
-
-https://github.com/jobymiranda/pos-system
-
-## Live Application
-
-[Open the existing hosted SimplePOS application](https://simplepos-jobymiranda.onrender.com/)
-
-The TFA2 MySQL-backed version is configured for local execution. The existing hosted link displays the earlier version because Railway deployment was skipped.
-
-## Submission Note
-
-This assessment is configured for local execution using XAMPP and
-MySQL. Hosting is not required based on the instructor's submission
-instructions.
+pos-system/
+├── app/
+│   ├── Config/
+│   │   ├── Filters.php
+│   │   └── Routes.php
+│   ├── Controllers/
+│   │   ├── Auth.php
+│   │   ├── Customers.php
+│   │   ├── Pages.php
+│   │   └── Users.php
+│   ├── Filters/
+│   │   ├── AuthFilter.php
+│   │   └── GuestFilter.php
+│   ├── Models/
+│   │   ├── CustomerModel.php
+│   │   └── UserModel.php
+│   └── Views/
+│       ├── auth/
+│       ├── customers/
+│       ├── pages/
+│       ├── templates/
+│       └── users/
+├── database/
+│   └── pos_system.sql
+├── public/
+│   ├── css/
+│   │   └── style.css
+│   ├── images/
+│   │   └── avatar-placeholder.svg
+│   └── uploads/
+│       └── avatars/
+├── writable/
+├── .gitignore
+├── composer.json
+├── env
+└── spark
