@@ -26,13 +26,12 @@ class Filters extends BaseFilters
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
 
-        'auth'          => \App\Filters\AuthFilter::class,
-        'guest'         => \App\Filters\GuestFilter::class,
+        'auth'  => \App\Filters\AuthFilter::class,
+        'guest' => \App\Filters\GuestFilter::class,
     ];
 
     public array $required = [
         'before' => [
-            'forcehttps',
             'pagecache',
         ],
         'after' => [
