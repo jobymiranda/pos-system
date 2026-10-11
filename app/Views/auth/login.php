@@ -2,176 +2,81 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111111">
     <title><?= esc($title) ?></title>
-
-    <link
-        rel="stylesheet"
-        href="<?= base_url('css/style.css') ?>"
-    >
+    <link rel="stylesheet" href="<?= base_url('css/style.css?v=1') ?>">
 </head>
+<body class="login-page">
+<?php $errors = session()->getFlashdata('errors') ?? []; ?>
 
-<body class="auth-page">
+<main class="login-layout">
+    <section class="login-art" aria-label="CasaForma introduction">
+        <div class="art-grid"></div>
+        <div class="art-circle art-circle-red"></div>
+        <div class="art-circle art-circle-blue"></div>
+        <div class="art-square"></div>
+        <div class="art-line"></div>
 
-<div class="auth-layout">
-    <section class="auth-showcase">
-        <div class="auth-showcase-content">
-            <a href="<?= base_url('/') ?>" class="auth-logo">
-                <span class="logo-symbol">S</span>
-                <span>SimplePOS</span>
-            </a>
+        <div class="login-brand">
+            <span class="brand-mark"><i></i><i></i><i></i></span>
+            <span><strong>CASAFORMA</strong><small>Furniture showroom</small></span>
+        </div>
 
-            <p class="eyebrow">SECURE POS MANAGEMENT</p>
+        <div class="login-statement">
+            <p class="kicker light">FORM · COLOR · FUNCTION</p>
+            <h1>Design the room.<br><em>Direct the sale.</em></h1>
+            <p>A vivid workspace for sculptural furniture, thoughtful clients, and every showroom transaction.</p>
+        </div>
 
-            <h1>Manage accounts with confidence.</h1>
-
-            <p class="showcase-description">
-                A secure and organized workspace for managing
-                customer records, staff accounts, and profile
-                information.
-            </p>
-
-            <div class="feature-list">
-                <div class="feature-item">
-                    <span>✓</span>
-                    <div>
-                        <strong>Protected records</strong>
-                        <p>Private pages require a valid session.</p>
-                    </div>
-                </div>
-
-                <div class="feature-item">
-                    <span>✓</span>
-                    <div>
-                        <strong>Secure passwords</strong>
-                        <p>Passwords are stored using secure hashing.</p>
-                    </div>
-                </div>
-
-                <div class="feature-item">
-                    <span>✓</span>
-                    <div>
-                        <strong>Professional workflow</strong>
-                        <p>Clear navigation, validation, and feedback.</p>
-                    </div>
-                </div>
-            </div>
+        <div class="login-art-footer">
+            <span>BAUHAUS / 2026</span>
+            <span>MANILA</span>
         </div>
     </section>
 
-    <main class="auth-form-area">
-        <div class="login-card">
-            <p class="eyebrow blue">WELCOME BACK</p>
+    <section class="login-panel">
+        <div class="login-card reveal visible">
+            <p class="kicker">PRIVATE SHOWROOM ACCESS</p>
+            <h2>Welcome back.</h2>
+            <p class="muted">Sign in with your CasaForma staff credentials.</p>
 
-            <h2>Sign in to SimplePOS</h2>
-
-            <p class="login-description">
-                Enter your staff credentials to continue.
-            </p>
-
-            <?php if (session()->getFlashdata('success')): ?>
-                <div class="alert alert-success">
-                    <?= esc(session()->getFlashdata('success')) ?>
-                </div>
+            <?php if ($message = session()->getFlashdata('success')): ?>
+                <div class="alert alert-success"><span><?= esc($message) ?></span></div>
+            <?php endif; ?>
+            <?php if ($message = session()->getFlashdata('error')): ?>
+                <div class="alert alert-danger"><span><?= esc($message) ?></span></div>
             <?php endif; ?>
 
-            <?php if (session()->getFlashdata('error')): ?>
-                <div class="alert alert-danger">
-                    <?= esc(session()->getFlashdata('error')) ?>
-                </div>
-            <?php endif; ?>
-
-            <?php
-                $errors = session()->getFlashdata('errors') ?? [];
-            ?>
-
-            <form
-                action="<?= base_url('login') ?>"
-                method="post"
-                class="professional-form"
-            >
+            <form action="<?= base_url('login') ?>" method="post" class="form-stack">
                 <?= csrf_field() ?>
+                <label class="field">
+                    <span>Username</span>
+                    <input type="text" name="username" value="<?= esc(old('username'), 'attr') ?>"
+                           autocomplete="username" placeholder="Enter username" autofocus>
+                    <?php if (isset($errors['username'])): ?><small class="field-error"><?= esc($errors['username']) ?></small><?php endif; ?>
+                </label>
 
-                <div class="form-group">
-                    <label for="username">Username</label>
+                <label class="field">
+                    <span>Password</span>
+                    <span class="password-wrap">
+                        <input id="loginPassword" type="password" name="password"
+                               autocomplete="current-password" placeholder="Enter password">
+                        <button type="button" data-password-toggle="loginPassword">Show</button>
+                    </span>
+                    <?php if (isset($errors['password'])): ?><small class="field-error"><?= esc($errors['password']) ?></small><?php endif; ?>
+                </label>
 
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        value="<?= esc(old('username')) ?>"
-                        placeholder="Enter your username"
-                        autocomplete="username"
-                        autofocus
-                    >
-
-                    <?php if (isset($errors['username'])): ?>
-                        <small class="field-error">
-                            <?= esc($errors['username']) ?>
-                        </small>
-                    <?php endif; ?>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-
-                    <div class="password-field">
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Enter your password"
-                            autocomplete="current-password"
-                        >
-
-                        <button
-                            type="button"
-                            id="passwordToggle"
-                            class="password-toggle"
-                        >
-                            Show
-                        </button>
-                    </div>
-
-                    <?php if (isset($errors['password'])): ?>
-                        <small class="field-error">
-                            <?= esc($errors['password']) ?>
-                        </small>
-                    <?php endif; ?>
-                </div>
-
-                <button
-                    type="submit"
-                    class="button button-primary button-full"
-                >
-                    Sign in securely
+                <button class="button button-dark button-full" type="submit">
+                    Enter the showroom <span>→</span>
                 </button>
             </form>
 
-            <p class="security-note">
-                🔒 Protected by secure password hashing,
-                CSRF protection, and server-side sessions.
-            </p>
+            <p class="login-security">Protected by hashed passwords, CSRF validation, and database sessions.</p>
         </div>
-    </main>
-</div>
+    </section>
+</main>
 
-<script>
-    const toggle = document.getElementById('passwordToggle');
-    const password = document.getElementById('password');
-
-    toggle.addEventListener('click', function () {
-        const passwordIsHidden = password.type === 'password';
-
-        password.type = passwordIsHidden ? 'text' : 'password';
-        toggle.textContent = passwordIsHidden ? 'Hide' : 'Show';
-    });
-</script>
-
+<script src="<?= base_url('js/app.js?v=1') ?>"></script>
 </body>
 </html>

@@ -1,21 +1,13 @@
-</main>
+ </main>
 
-<footer class="site-footer">
-    <div class="footer-container">
-        <div>
-            <strong>SimplePOS</strong>
-
-            <p>
-                Secure customer and staff account management.
-            </p>
-        </div>
-
-        <p>
-            &copy; <?= date('Y') ?> SimplePOS.
-            CodeIgniter 4 Laboratory Exercise.
-        </p>
+        <footer class="site-footer">
+            <span>CasaForma Furniture Showroom</span>
+            <span>CodeIgniter 4 · <?= date('Y') ?></span>
+        </footer>
     </div>
-</footer>
+</div>
 
+<script src="<?= base_url('js/app.js?v=2') ?>" defer></script>
 </body>
 </html>
+```

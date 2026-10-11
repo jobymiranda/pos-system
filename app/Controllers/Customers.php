@@ -9,187 +9,125 @@ class Customers extends BaseController
 {
     public function index(): string
     {
-        $customerModel = new CustomerModel();
-
-        $data = [
-            'title' => 'Customer Accounts',
-            'customers' => $customerModel
-                ->orderBy('id', 'ASC')
+        return $this->render('customers/index', [
+            'title' => 'Clients | CasaForma',
+            'customers' => (new CustomerModel())
+                ->orderBy('full_name', 'ASC')
                 ->findAll(),
-        ];
-
-        return view('templates/header', $data)
-            . view('templates/navigation')
-            . view('customers/index', $data)
-            . view('templates/footer');
+        ]);
     }
 
     public function newForm(): string
     {
-        $data = [
-            'title'       => 'New Customer',
-            'formHeading' => 'Create Customer Account',
-            'formAction'  => site_url('customers'),
-            'submitLabel' => 'Create Customer',
-            'customer'    => [],
-        ];
-
-        return view('templates/header', $data)
-            . view('templates/navigation')
-            . view('customers/form', $data)
-            . view('templates/footer');
+        return $this->render('customers/form', [
+            'title' => 'Add Client | CasaForma',
+            'heading' => 'Welcome a new client',
+            'customer' => [],
+            'formAction' => site_url('customers'),
+            'submitLabel' => 'Create client record',
+        ]);
     }
 
     public function create()
     {
-        $rules = [
-            'full_name' => [
-                'label' => 'Full name',
-                'rules' => 'required|max_length[100]',
-                'errors' => [
-                    'required' => 'Please enter the customer’s full name.',
-                ],
-            ],
-            'email' => [
-                'label' => 'Email address',
-                'rules' => 'required|max_length[100]|valid_email',
-                'errors' => [
-                    'required'    => 'Please enter an email address.',
-                    'valid_email' => 'Please enter a valid email address.',
-                ],
-            ],
-            'phone' => [
-                'label' => 'Phone number',
-                'rules' => 'permit_empty|max_length[20]',
-            ],
-        ];
-
-        $input = [
-            'full_name' => trim(
-                (string) $this->request->getPost('full_name')
-            ),
-            'email' => trim(
-                (string) $this->request->getPost('email')
-            ),
-            'phone' => trim(
-                (string) $this->request->getPost('phone')
-            ),
-        ];
-
-        if (! $this->validateData($input, $rules)) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with('errors', $this->validator->getErrors());
+        if (! $this->validate($this->rules())) {
+            return redirect()->back()->withInput()->with(
+                'errors',
+                $this->validator->getErrors()
+            );
         }
 
-        $validated = $this->validator->getValidated();
+        $data = $this->customerData();
+        $data['created_at'] = date('Y-m-d H:i:s');
+        (new CustomerModel())->insert($data);
 
-        $customerModel = new CustomerModel();
-
-        $customerModel->insert([
-            'full_name' => $validated['full_name'],
-            'email'     => $validated['email'],
-            'phone'     => $validated['phone'] !== ''
-                ? $validated['phone']
-                : null,
-            'created_at' => date('Y-m-d H:i:s'),
-        ]);
-
-        return redirect()
-            ->to(site_url('customers'))
-            ->with('success', 'Customer account created successfully.');
+        return redirect()->to('/customers')->with(
+            'success',
+            'The client record was created successfully.'
+        );
     }
 
     public function edit(int $id): string
     {
-        $customerModel = new CustomerModel();
-        $customer      = $customerModel->find($id);
+        $customer = (new CustomerModel())->find($id);
 
         if ($customer === null) {
             throw PageNotFoundException::forPageNotFound(
-                'Customer account not found.'
+                'Client record not found.'
             );
         }
 
-        $data = [
-            'title'       => 'Edit Customer',
-            'formHeading' => 'Edit Customer Account',
-            'formAction'  => site_url("customers/{$id}"),
-            'submitLabel' => 'Save Customer Changes',
-            'customer'    => $customer,
-        ];
-
-        return view('templates/header', $data)
-            . view('templates/navigation')
-            . view('customers/form', $data)
-            . view('templates/footer');
+        return $this->render('customers/form', [
+            'title' => 'Edit Client | CasaForma',
+            'heading' => 'Update client details',
+            'customer' => $customer,
+            'formAction' => site_url('customers/' . $id),
+            'submitLabel' => 'Save client changes',
+        ]);
     }
 
     public function update(int $id)
     {
-        $customerModel = new CustomerModel();
-        $customer      = $customerModel->find($id);
+        $model = new CustomerModel();
 
-        if ($customer === null) {
+        if ($model->find($id) === null) {
             throw PageNotFoundException::forPageNotFound(
-                'Customer account not found.'
+                'Client record not found.'
             );
         }
 
-        $rules = [
-            'full_name' => [
-                'label' => 'Full name',
-                'rules' => 'required|max_length[100]',
-                'errors' => [
-                    'required' => 'Please enter the customer’s full name.',
-                ],
-            ],
-            'email' => [
-                'label' => 'Email address',
-                'rules' => 'required|max_length[100]|valid_email',
-                'errors' => [
-                    'required'    => 'Please enter an email address.',
-                    'valid_email' => 'Please enter a valid email address.',
-                ],
-            ],
-            'phone' => [
-                'label' => 'Phone number',
-                'rules' => 'permit_empty|max_length[20]',
-            ],
-        ];
+        if (! $this->validate($this->rules())) {
+            return redirect()->back()->withInput()->with(
+                'errors',
+                $this->validator->getErrors()
+            );
+        }
 
-        $input = [
+        $model->update($id, $this->customerData());
+
+        return redirect()->to('/customers')->with(
+            'success',
+            'The client record was updated successfully.'
+        );
+    }
+
+    public function delete(int $id)
+    {
+        $model = new CustomerModel();
+
+        if ($model->find($id) === null) {
+            throw PageNotFoundException::forPageNotFound(
+                'Client record not found.'
+            );
+        }
+
+        $model->delete($id);
+
+        return redirect()->to('/customers')->with(
+            'success',
+            'The client record was removed from active accounts.'
+        );
+    }
+
+    private function rules(): array
+    {
+        return [
+            'full_name' => 'required|min_length[2]|max_length[100]',
+            'email' => 'required|valid_email|max_length[100]',
+            'phone' => 'permit_empty|max_length[20]',
+        ];
+    }
+
+    private function customerData(): array
+    {
+        $phone = trim((string) $this->request->getPost('phone'));
+
+        return [
             'full_name' => trim(
                 (string) $this->request->getPost('full_name')
             ),
-            'email' => trim(
-                (string) $this->request->getPost('email')
-            ),
-            'phone' => trim(
-                (string) $this->request->getPost('phone')
-            ),
+            'email' => trim((string) $this->request->getPost('email')),
+            'phone' => $phone !== '' ? $phone : null,
         ];
-
-        if (! $this->validateData($input, $rules)) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with('errors', $this->validator->getErrors());
-        }
-
-        $validated = $this->validator->getValidated();
-
-        $customerModel->update($id, [
-            'full_name' => $validated['full_name'],
-            'email'     => $validated['email'],
-            'phone'     => $validated['phone'] !== ''
-                ? $validated['phone']
-                : null,
-        ]);
-
-        return redirect()
-            ->to(site_url('customers'))
-            ->with('success', 'Customer account updated successfully.');
     }
 }

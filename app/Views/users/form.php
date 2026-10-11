@@ -1,124 +1,14 @@
-<?php
-$errors = session()->getFlashdata('errors') ?? [];
-
-$currentAvatar = ! empty($user['avatar'])
-    ? base_url(
-        'uploads/avatars/'
-        . rawurlencode(basename($user['avatar']))
-    )
-    : base_url('images/avatar-placeholder.svg');
-?>
-
-<section class="page-heading">
-    <p class="eyebrow">User Management</p>
-    <h1><?= esc($formHeading) ?></h1>
-
-    <p>
-        Complete the required account information below.
-    </p>
-</section>
-
-<section class="form-card">
-    <?php if ($errors !== []): ?>
-        <div class="alert alert-error" role="alert">
-            <strong>Please correct the following:</strong>
-
-            <ul>
-                <?php foreach ($errors as $error): ?>
-                    <li><?= esc($error) ?></li>
-                <?php endforeach ?>
-            </ul>
-        </div>
-    <?php endif ?>
-
-    <form
-        method="post"
-        action="<?= esc($formAction, 'attr') ?>"
-        enctype="multipart/form-data"
-    >
+<?php $errors = session()->getFlashdata('errors') ?? []; ?>
+<section class="page-heading reveal"><div><p class="kicker">TEAM EDITOR</p><h1><?= esc($heading) ?></h1><p>Credentials are protected with one-way password hashing.</p></div><a class="button button-ghost" href="<?= base_url('users') ?>">← Back</a></section>
+<section class="form-layout reveal">
+    <form action="<?= esc($formAction, 'attr') ?>" method="post" enctype="multipart/form-data" class="form-card form-stack">
         <?= csrf_field() ?>
-
-        <div class="form-group">
-            <label for="username">
-                Username <span aria-hidden="true">*</span>
-            </label>
-
-            <input
-                type="text"
-                id="username"
-                name="username"
-                maxlength="50"
-                required
-                value="<?= esc(
-                    old(
-                        'username',
-                        $user['username'] ?? ''
-                    ),
-                    'attr'
-                ) ?>"
-            >
-        </div>
-
-        <div class="form-group">
-            <label for="full_name">
-                Full Name <span aria-hidden="true">*</span>
-            </label>
-
-            <input
-                type="text"
-                id="full_name"
-                name="full_name"
-                maxlength="100"
-                required
-                value="<?= esc(
-                    old(
-                        'full_name',
-                        $user['full_name'] ?? ''
-                    ),
-                    'attr'
-                ) ?>"
-            >
-        </div>
-
-        <?php if ($allowAvatar): ?>
-            <div class="form-group">
-                <label>Current Profile Picture</label>
-
-                <img
-                    class="avatar-preview"
-                    src="<?= esc($currentAvatar, 'attr') ?>"
-                    alt="Current profile picture"
-                    width="120"
-                    height="120"
-                >
-            </div>
-
-            <div class="form-group">
-                <label for="avatar">New Profile Picture</label>
-
-                <input
-                    type="file"
-                    id="avatar"
-                    name="avatar"
-                    accept=".jpg,.jpeg,.png,image/jpeg,image/png"
-                >
-
-                <p class="field-help">
-                    Optional. Upload a JPG or PNG no larger than
-                    2 MB. It will be prepared as a 300 × 300
-                    thumbnail.
-                </p>
-            </div>
-        <?php endif ?>
-
-        <div class="form-actions">
-            <button class="button button-solid" type="submit">
-                <?= esc($submitLabel) ?>
-            </button>
-
-            <a class="button button-muted" href="<?= site_url('users') ?>">
-                Cancel
-            </a>
-        </div>
+        <?php if ($errors !== []): ?><div class="alert alert-danger"><ul><?php foreach ($errors as $error): ?><li><?= esc($error) ?></li><?php endforeach; ?></ul></div><?php endif; ?>
+        <div class="form-grid"><label class="field"><span>Username *</span><input type="text" name="username" value="<?= esc(old('username', $user['username'] ?? ''), 'attr') ?>" placeholder="Example: showroom01"></label><label class="field"><span>Full name *</span><input type="text" name="full_name" value="<?= esc(old('full_name', $user['full_name'] ?? ''), 'attr') ?>" placeholder="Complete name"></label></div>
+        <label class="field"><span>Role *</span><?php $selectedRole = old('role', $user['role'] ?? 'Staff'); ?><select name="role"><?php foreach (['Administrator', 'Manager', 'Cashier', 'Staff', 'Reviewer'] as $role): ?><option value="<?= esc($role) ?>" <?= $selectedRole === $role ? 'selected' : '' ?>><?= esc($role) ?></option><?php endforeach; ?></select></label>
+        <div class="form-grid"><label class="field"><span><?= $creating ? 'Password *' : 'New password' ?></span><input type="password" name="password" autocomplete="new-password" placeholder="<?= $creating ? 'At least 8 characters' : 'Leave blank to keep current' ?>"></label><label class="field"><span>Confirm password <?= $creating ? '*' : '' ?></span><input type="password" name="password_confirm" autocomplete="new-password" placeholder="Repeat password"></label></div>
+        <label class="field"><span>Profile picture</span><input type="file" name="avatar" accept=".jpg,.jpeg,.png,image/jpeg,image/png" data-image-input="avatarPreview"><small>JPG or PNG, maximum 2 MB.</small></label>
+        <div class="form-actions"><a class="button button-ghost" href="<?= base_url('users') ?>">Cancel</a><button class="button button-yellow" type="submit"><?= esc($submitLabel) ?> →</button></div>
     </form>
+    <aside class="preview-card staff-preview"><p class="kicker light">PROFILE PREVIEW</p><img id="avatarPreview" src="<?= esc(media_url($user['avatar'] ?? null, 'avatars', 'images/avatar-placeholder.svg'), 'attr') ?>" alt="Avatar preview"><div><strong><?= esc($user['full_name'] ?? 'New team member') ?></strong><small><?= esc($user['role'] ?? 'CasaForma staff') ?></small></div></aside>
 </section>

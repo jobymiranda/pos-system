@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 760" role="img" aria-labelledby="title desc">
+  <title id="title">CasaForma furniture placeholder</title>
+  <desc id="desc">Abstract Bauhaus furniture composition</desc>
+  <rect width="1000" height="760" fill="#ede8dc"/>
+  <circle cx="790" cy="150" r="110" fill="#ef4135"/>
+  <rect x="95" y="90" width="270" height="270" rx="135" fill="#1746d1"/>
+  <rect x="245" y="355" width="520" height="185" rx="85" fill="#f6c515"/>
+  <rect x="300" y="525" width="38" height="145" fill="#111111"/>
+  <rect x="675" y="525" width="38" height="145" fill="#111111"/>
+  <path d="M120 650h760" stroke="#111111" stroke-width="12"/>
+  <path d="M820 245v300" stroke="#2c9a62" stroke-width="52"/>
+  <text x="500" y="720" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" font-weight="700" letter-spacing="8" fill="#111111">CASAFORMA OBJECT</text>
+</svg>

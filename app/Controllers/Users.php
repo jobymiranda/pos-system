@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Libraries\MediaStorage;
 use App\Models\UserModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
@@ -9,323 +10,250 @@ class Users extends BaseController
 {
     public function index(): string
     {
-        $userModel = new UserModel();
-
-        return view('users/index', [
-            'title' => 'User Accounts',
-            'users' => $userModel
+        return $this->render('users/index', [
+            'title' => 'Studio Team | CasaForma',
+            'users' => (new UserModel())
                 ->orderBy('full_name', 'ASC')
                 ->findAll(),
         ]);
     }
 
-    public function new(): string
+    public function newForm(): string
     {
-        return view('users/new', [
-            'title' => 'Add New User',
+        return $this->render('users/form', [
+            'title' => 'Add Staff | CasaForma',
+            'heading' => 'Add a studio team member',
+            'user' => [],
+            'formAction' => site_url('users'),
+            'submitLabel' => 'Create staff account',
+            'creating' => true,
         ]);
     }
 
     public function create()
     {
-        $rules = [
-            'username' => [
-                'label' => 'Username',
-                'rules' => [
-                    'required',
-                    'min_length[3]',
-                    'max_length[100]',
-                    'alpha_numeric_punct',
-                    'is_unique[users.username]',
-                ],
-                'errors' => [
-                    'required'  => 'Please enter a username.',
-                    'is_unique' => 'That username is already being used.',
-                ],
-            ],
-
-            'full_name' => [
-                'label' => 'Full Name',
-                'rules' => 'required|min_length[2]|max_length[150]',
-                'errors' => [
-                    'required' => 'Please enter the full name.',
-                ],
-            ],
-
-            'role' => [
-                'label' => 'Role',
-                'rules' => 'required|max_length[50]',
-                'errors' => [
-                    'required' => 'Please select a role.',
-                ],
-            ],
-
-            'password' => [
-                'label' => 'Password',
-                'rules' => 'required|min_length[8]|max_length[255]',
-                'errors' => [
-                    'required'   => 'Please enter a password.',
-                    'min_length' => 'The password must contain at least 8 characters.',
-                ],
-            ],
-
-            'password_confirm' => [
-                'label' => 'Password Confirmation',
-                'rules' => 'required|matches[password]',
-                'errors' => [
-                    'required' => 'Please confirm the password.',
-                    'matches'  => 'The passwords do not match.',
-                ],
-            ],
-        ];
+        $rules = $this->rules(true);
 
         if (! $this->validate($rules)) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with('errors', $this->validator->getErrors());
+            return redirect()->back()->withInput()->with(
+                'errors',
+                $this->validator->getErrors()
+            );
         }
 
-        $userModel = new UserModel();
+        $data = $this->userData();
+        $data['password'] = password_hash(
+            (string) $this->request->getPost('password'),
+            PASSWORD_DEFAULT
+        );
+        $data['created_at'] = date('Y-m-d H:i:s');
 
-        $userModel->insert([
-            'username' => trim(
-                (string) $this->request->getPost('username')
-            ),
+        $avatar = $this->request->getFile('avatar');
 
-            'full_name' => trim(
-                (string) $this->request->getPost('full_name')
-            ),
+        if ($this->hasUpload($avatar)) {
+            if (! $this->validate($this->avatarRules())) {
+                return redirect()->back()->withInput()->with(
+                    'errors',
+                    $this->validator->getErrors()
+                );
+            }
 
-            'role' => trim(
-                (string) $this->request->getPost('role')
-            ),
+            try {
+                $data['avatar'] = (new MediaStorage())
+                    ->storePreparedImage($avatar, 'avatars', 500, 500);
+            } catch (\Throwable $exception) {
+                log_message('error', $exception->getMessage());
+                return redirect()->back()->withInput()->with(
+                    'error',
+                    'The avatar could not be prepared.'
+                );
+            }
+        }
 
-            'password' => password_hash(
-                (string) $this->request->getPost('password'),
-                PASSWORD_DEFAULT
-            ),
-        ]);
+        (new UserModel())->insert($data);
 
-        return redirect()
-            ->to('/users')
-            ->with(
-                'success',
-                'The user account was created successfully.'
-            );
+        return redirect()->to('/users')->with(
+            'success',
+            'The staff account was created successfully.'
+        );
     }
 
     public function edit(int $id): string
     {
-        $userModel = new UserModel();
-        $user      = $userModel->find($id);
+        $user = (new UserModel())->find($id);
 
         if ($user === null) {
             throw PageNotFoundException::forPageNotFound(
-                'The requested user account could not be found.'
+                'Staff account not found.'
             );
         }
 
-        return view('users/edit', [
-            'title' => 'Edit User Account',
-            'user'  => $user,
+        return $this->render('users/form', [
+            'title' => 'Edit Staff | CasaForma',
+            'heading' => 'Update staff details',
+            'user' => $user,
+            'formAction' => site_url('users/' . $id),
+            'submitLabel' => 'Save staff changes',
+            'creating' => false,
         ]);
     }
 
     public function update(int $id)
     {
-        $userModel = new UserModel();
-        $user      = $userModel->find($id);
+        $model = new UserModel();
+        $user = $model->find($id);
 
         if ($user === null) {
             throw PageNotFoundException::forPageNotFound(
-                'The requested user account could not be found.'
+                'Staff account not found.'
             );
         }
 
-        $rules = [
-            'username' => [
-                'label' => 'Username',
-                'rules' => [
-                    'required',
-                    'min_length[3]',
-                    'max_length[100]',
-                    'alpha_numeric_punct',
-                    "is_unique[users.username,id,{$id}]",
-                ],
-                'errors' => [
-                    'required'  => 'Please enter a username.',
-                    'is_unique' => 'That username is already being used.',
-                ],
-            ],
-
-            'full_name' => [
-                'label' => 'Full Name',
-                'rules' => 'required|min_length[2]|max_length[150]',
-                'errors' => [
-                    'required' => 'Please enter the full name.',
-                ],
-            ],
-
-            'role' => [
-                'label' => 'Role',
-                'rules' => 'required|max_length[50]',
-                'errors' => [
-                    'required' => 'Please select a role.',
-                ],
-            ],
-
-            'password' => [
-                'label' => 'New Password',
-                'rules' => 'permit_empty|min_length[8]|max_length[255]',
-                'errors' => [
-                    'min_length' => 'The new password must contain at least 8 characters.',
-                ],
-            ],
-
-            'password_confirm' => [
-                'label' => 'Password Confirmation',
-                'rules' => 'permit_empty|matches[password]',
-                'errors' => [
-                    'matches' => 'The passwords do not match.',
-                ],
-            ],
-        ];
-
-        if (! $this->validate($rules)) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with('errors', $this->validator->getErrors());
+        if (! $this->validate($this->rules(false, $id))) {
+            return redirect()->back()->withInput()->with(
+                'errors',
+                $this->validator->getErrors()
+            );
         }
 
-        $data = [
-            'username' => trim(
-                (string) $this->request->getPost('username')
-            ),
+        $data = $this->userData();
+        $password = (string) $this->request->getPost('password');
 
-            'full_name' => trim(
-                (string) $this->request->getPost('full_name')
-            ),
-
-            'role' => trim(
-                (string) $this->request->getPost('role')
-            ),
-        ];
-
-        $newPassword = (string) $this->request->getPost('password');
-
-        if ($newPassword !== '') {
+        if ($password !== '') {
             $data['password'] = password_hash(
-                $newPassword,
+                $password,
                 PASSWORD_DEFAULT
             );
         }
 
-        $avatar     = $this->request->getFile('avatar');
-        $avatarName = $user['avatar'] ?? null;
+        $avatar = $this->request->getFile('avatar');
 
-        if (
-            $avatar !== null
-            && $avatar->getError() !== UPLOAD_ERR_NO_FILE
-        ) {
-            $avatarRules = [
-                'avatar' => [
-                    'label' => 'Profile Picture',
-                    'rules' => [
-                        'uploaded[avatar]',
-                        'is_image[avatar]',
-                        'mime_in[avatar,image/jpg,image/jpeg,image/png]',
-                        'max_size[avatar,2048]',
-                    ],
-                    'errors' => [
-                        'uploaded' => 'Please select a valid image.',
-                        'is_image' => 'The uploaded file must be an image.',
-                        'mime_in'  => 'Only JPG and PNG images are allowed.',
-                        'max_size' => 'The profile picture must not exceed 2 MB.',
-                    ],
-                ],
-            ];
-
-            if (! $this->validate($avatarRules)) {
-                return redirect()
-                    ->back()
-                    ->withInput()
-                    ->with('errors', $this->validator->getErrors());
+        if ($this->hasUpload($avatar)) {
+            if (! $this->validate($this->avatarRules())) {
+                return redirect()->back()->withInput()->with(
+                    'errors',
+                    $this->validator->getErrors()
+                );
             }
-
-            $uploadDirectory = FCPATH
-                . 'uploads'
-                . DIRECTORY_SEPARATOR
-                . 'avatars';
-
-            if (! is_dir($uploadDirectory)) {
-                mkdir($uploadDirectory, 0755, true);
-            }
-
-            $newAvatarName = $avatar->getRandomName();
-
-            $destination = $uploadDirectory
-                . DIRECTORY_SEPARATOR
-                . $newAvatarName;
 
             try {
-                service('image')
-                    ->withFile($avatar->getTempName())
-                    ->fit(400, 400, 'center')
-                    ->save($destination, 85);
-
-                $oldAvatar = $user['avatar'] ?? null;
-
-                if (! empty($oldAvatar)) {
-                    $oldAvatarPath = $uploadDirectory
-                        . DIRECTORY_SEPARATOR
-                        . basename($oldAvatar);
-
-                    if (is_file($oldAvatarPath)) {
-                        unlink($oldAvatarPath);
-                    }
-                }
-
-                $data['avatar'] = $newAvatarName;
-                $avatarName     = $newAvatarName;
-            } catch (\Throwable $exception) {
-                if (is_file($destination)) {
-                    unlink($destination);
-                }
-
-                log_message(
-                    'error',
-                    'Avatar preparation failed: {message}',
-                    ['message' => $exception->getMessage()]
+                $storage = new MediaStorage();
+                $data['avatar'] = $storage->storePreparedImage(
+                    $avatar,
+                    'avatars',
+                    500,
+                    500
                 );
-
-                return redirect()
-                    ->back()
-                    ->withInput()
-                    ->with(
-                        'error',
-                        'The profile picture could not be prepared.'
-                    );
+                $storage->deleteLocal($user['avatar'], 'avatars');
+            } catch (\Throwable $exception) {
+                log_message('error', $exception->getMessage());
+                return redirect()->back()->withInput()->with(
+                    'error',
+                    'The new avatar could not be prepared.'
+                );
             }
         }
 
-        $userModel->update($id, $data);
+        $model->update($id, $data);
 
         if ((int) session()->get('user_id') === $id) {
             session()->set([
-                'username'  => $data['username'],
+                'username' => $data['username'],
                 'full_name' => $data['full_name'],
-                'role'      => $data['role'],
-                'avatar'    => $avatarName,
+                'role' => $data['role'],
+                'avatar' => $data['avatar'] ?? $user['avatar'],
             ]);
         }
 
-        return redirect()
-            ->to('/users')
-            ->with(
-                'success',
-                'The user account was updated successfully.'
+        return redirect()->to('/users')->with(
+            'success',
+            'The staff account was updated successfully.'
+        );
+    }
+
+    public function archive(int $id)
+    {
+        $model = new UserModel();
+        $user = $model->find($id);
+
+        if ($user === null) {
+            throw PageNotFoundException::forPageNotFound(
+                'Staff account not found.'
             );
+        }
+
+        if ((int) session()->get('user_id') === $id) {
+            return redirect()->to('/users')->with(
+                'error',
+                'You cannot archive the account currently signed in.'
+            );
+        }
+
+        if ($user['username'] === 'professor') {
+            return redirect()->to('/users')->with(
+                'error',
+                'The faculty review account is protected.'
+            );
+        }
+
+        $model->delete($id);
+
+        return redirect()->to('/users')->with(
+            'success',
+            'The staff account was archived.'
+        );
+    }
+
+    private function rules(bool $creating, ?int $id = null): array
+    {
+        $unique = $creating
+            ? 'is_unique[users.username]'
+            : 'is_unique[users.username,id,' . $id . ']';
+
+        return [
+            'username' => 'required|min_length[3]|max_length[50]|'
+                . 'alpha_numeric_punct|' . $unique,
+            'full_name' => 'required|min_length[2]|max_length[100]',
+            'role' => 'required|in_list[Administrator,Manager,Cashier,Staff,Reviewer]',
+            'password' => $creating
+                ? 'required|min_length[8]|max_length[255]'
+                : 'permit_empty|min_length[8]|max_length[255]',
+            'password_confirm' => $creating
+                ? 'required|matches[password]'
+                : 'permit_empty|matches[password]',
+        ];
+    }
+
+    private function avatarRules(): array
+    {
+        return [
+            'avatar' => [
+                'rules' => [
+                    'uploaded[avatar]',
+                    'is_image[avatar]',
+                    'mime_in[avatar,image/jpg,image/jpeg,image/png]',
+                    'max_size[avatar,2048]',
+                ],
+            ],
+        ];
+    }
+
+    private function userData(): array
+    {
+        return [
+            'username' => trim(
+                (string) $this->request->getPost('username')
+            ),
+            'full_name' => trim(
+                (string) $this->request->getPost('full_name')
+            ),
+            'role' => trim((string) $this->request->getPost('role')),
+        ];
+    }
+
+    private function hasUpload($file): bool
+    {
+        return $file !== null
+            && $file->getError() !== UPLOAD_ERR_NO_FILE;
     }
 }

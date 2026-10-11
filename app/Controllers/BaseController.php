@@ -9,21 +9,24 @@ use Psr\Log\LoggerInterface;
 
 abstract class BaseController extends Controller
 {
-    // protected $session;
-
-    /**
-     * @return void
-     */
     public function initController(
         RequestInterface $request,
         ResponseInterface $response,
         LoggerInterface $logger
     ) {
-        // Load the URL helper for all controllers.
-        $this->helpers = ['url', 'form'];
-        // Do not edit this line.
-        parent::initController($request, $response, $logger);
+        $this->helpers = [
+            'url',
+            'form',
+            'media',
+        ];
 
-        // $this->session = service('session');
+        parent::initController($request, $response, $logger);
+    }
+
+    protected function render(string $view, array $data = []): string
+    {
+        return view('templates/header', $data)
+            . view($view, $data)
+            . view('templates/footer', $data);
     }
 }

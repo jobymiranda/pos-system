@@ -1,23 +1,11 @@
-<svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="300"
-    height="300"
-    viewBox="0 0 300 300"
-    role="img"
-    aria-labelledby="title description"
->
-    <title id="title">Default user avatar</title>
-
-    <desc id="description">
-        Placeholder profile image for a user without an uploaded avatar.
-    </desc>
-
-    <rect width="300" height="300" rx="150" fill="#dbeafe"/>
-
-    <circle cx="150" cy="110" r="55" fill="#1e3a8a"/>
-
-    <path
-        d="M55 275c8-65 43-100 95-100s87 35 95 100"
-        fill="#1e3a8a"
-    />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" role="img" aria-labelledby="title desc">
+  <title id="title">CasaForma staff avatar placeholder</title>
+  <desc id="desc">Abstract geometric portrait</desc>
+  <rect width="500" height="500" fill="#f6c515"/>
+  <circle cx="250" cy="185" r="105" fill="#1746d1"/>
+  <path d="M78 500c9-128 75-204 172-204s163 76 172 204" fill="#ef4135"/>
+  <circle cx="215" cy="170" r="15" fill="#fffdf8"/>
+  <circle cx="285" cy="170" r="15" fill="#fffdf8"/>
+  <path d="M205 225c28 24 62 24 90 0" fill="none" stroke="#111111" stroke-width="13" stroke-linecap="round"/>
+  <path d="M0 70h125V0" fill="#2c9a62"/>
 </svg>

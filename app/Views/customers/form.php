@@ -1,101 +1,11 @@
-<?php
-$errors = session()->getFlashdata('errors') ?? [];
-?>
-
-<section class="page-heading">
-    <p class="eyebrow">Customer Management</p>
-    <h1><?= esc($formHeading) ?></h1>
-
-    <p>
-        Complete the form below. Fields marked with an asterisk are
-        required.
-    </p>
-</section>
-
-<section class="form-card">
-    <?php if ($errors !== []): ?>
-        <div class="alert alert-error" role="alert">
-            <strong>Please correct the following:</strong>
-
-            <ul>
-                <?php foreach ($errors as $error): ?>
-                    <li><?= esc($error) ?></li>
-                <?php endforeach ?>
-            </ul>
-        </div>
-    <?php endif ?>
-
-    <form method="post" action="<?= esc($formAction, 'attr') ?>">
+<?php $errors = session()->getFlashdata('errors') ?? []; ?>
+<section class="page-heading reveal"><div><p class="kicker">CLIENT EDITOR</p><h1><?= esc($heading) ?></h1><p>Keep contact details accurate for future showroom visits.</p></div><a class="button button-ghost" href="<?= base_url('customers') ?>">← Back</a></section>
+<section class="form-card narrow reveal">
+    <form action="<?= esc($formAction, 'attr') ?>" method="post" class="form-stack">
         <?= csrf_field() ?>
-
-        <div class="form-group">
-            <label for="full_name">
-                Full Name <span aria-hidden="true">*</span>
-            </label>
-
-            <input
-                type="text"
-                id="full_name"
-                name="full_name"
-                maxlength="100"
-                required
-                value="<?= esc(
-                    old(
-                        'full_name',
-                        $customer['full_name'] ?? ''
-                    ),
-                    'attr'
-                ) ?>"
-            >
-        </div>
-
-        <div class="form-group">
-            <label for="email">
-                Email Address <span aria-hidden="true">*</span>
-            </label>
-
-            <input
-                type="email"
-                id="email"
-                name="email"
-                maxlength="100"
-                required
-                value="<?= esc(
-                    old(
-                        'email',
-                        $customer['email'] ?? ''
-                    ),
-                    'attr'
-                ) ?>"
-            >
-        </div>
-
-        <div class="form-group">
-            <label for="phone">Phone Number</label>
-
-            <input
-                type="tel"
-                id="phone"
-                name="phone"
-                maxlength="20"
-                value="<?= esc(
-                    old(
-                        'phone',
-                        $customer['phone'] ?? ''
-                    ),
-                    'attr'
-                ) ?>"
-            >
-        </div>
-
-        <div class="form-actions">
-            <button class="button button-solid" type="submit">
-                <?= esc($submitLabel) ?>
-            </button>
-
-            <a class="button button-muted" href="<?= site_url('customers') ?>">
-                Cancel
-            </a>
-        </div>
+        <?php if ($errors !== []): ?><div class="alert alert-danger"><ul><?php foreach ($errors as $error): ?><li><?= esc($error) ?></li><?php endforeach; ?></ul></div><?php endif; ?>
+        <label class="field"><span>Full name *</span><input type="text" name="full_name" maxlength="100" value="<?= esc(old('full_name', $customer['full_name'] ?? ''), 'attr') ?>" placeholder="Complete client name"></label>
+        <div class="form-grid"><label class="field"><span>Email address *</span><input type="email" name="email" maxlength="100" value="<?= esc(old('email', $customer['email'] ?? ''), 'attr') ?>" placeholder="name@example.com"></label><label class="field"><span>Phone number</span><input type="text" name="phone" maxlength="20" value="<?= esc(old('phone', $customer['phone'] ?? ''), 'attr') ?>" placeholder="09XX-XXX-XXXX"></label></div>
+        <div class="form-actions"><a class="button button-ghost" href="<?= base_url('customers') ?>">Cancel</a><button class="button button-blue" type="submit"><?= esc($submitLabel) ?> →</button></div>
     </form>
 </section>
