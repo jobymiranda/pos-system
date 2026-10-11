@@ -77,6 +77,6 @@
     </section>
 </main>
 
-<script src="<?= base_url('js/app.js?v=1') ?>"></script>
+<script src="<?= base_url('js/app.js?v=3') ?>"></script>
 </body>
 </html>

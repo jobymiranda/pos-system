@@ -89,4 +89,3 @@ function updateSaleSummary() {
 [productSelect, customerSelect, quantityInput].forEach((element) => element?.addEventListener("change", updateSaleSummary));
 quantityInput?.addEventListener("input", updateSaleSummary);
 updateSaleSummary();
-```

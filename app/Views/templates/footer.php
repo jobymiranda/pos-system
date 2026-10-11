@@ -7,7 +7,6 @@
     </div>
 </div>
 
-<script src="<?= base_url('js/app.js?v=2') ?>" defer></script>
+<script src="<?= base_url('js/app.js?v=3') ?>" defer></script>
 </body>
 </html>
-```

@@ -27,4 +27,3 @@
 
     <aside class="preview-card"><p class="kicker light">CATALOG PREVIEW</p><img id="productPreview" src="<?= esc(product_image_url($product), 'attr') ?>" alt="Product preview"><div><span><?= esc($product['category'] ?? 'Sofa & Seating') ?></span><strong><?= esc($product['name'] ?? 'New furniture object') ?></strong><small><?= ! empty($product['price']) ? peso($product['price']) : 'Set a price to complete the record' ?></small></div></aside>
 </section>
-```

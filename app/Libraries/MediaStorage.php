@@ -28,10 +28,12 @@ class MediaStorage
             . DIRECTORY_SEPARATOR
             . 'casaforma-' . $fileName;
 
-        service('image')
-            ->withFile($file->getTempName())
-            ->fit($width, $height, 'center')
-            ->save($temporaryPath, 86);
+        $this->prepareImage(
+            $file,
+            $temporaryPath,
+            $width,
+            $height
+        );
 
         try {
             $token = (string) getenv('BLOB_READ_WRITE_TOKEN');
@@ -91,6 +93,52 @@ class MediaStorage
 
         if (is_file($path)) {
             unlink($path);
+        }
+    }
+
+    private function prepareImage(
+        UploadedFile $file,
+        string $temporaryPath,
+        int $width,
+        int $height
+    ): void {
+        $sourcePath = $file->getTempName();
+
+        if ($sourcePath === '' || ! is_file($sourcePath)) {
+            throw new RuntimeException(
+                'The uploaded image is no longer available.'
+            );
+        }
+
+        if (
+            extension_loaded('gd')
+            && function_exists('imagecreatetruecolor')
+        ) {
+            try {
+                service('image')
+                    ->withFile($sourcePath)
+                    ->fit($width, $height, 'center')
+                    ->save($temporaryPath, 86);
+
+                if (
+                    is_file($temporaryPath)
+                    && filesize($temporaryPath) > 0
+                ) {
+                    return;
+                }
+            } catch (\Throwable $exception) {
+                log_message(
+                    'warning',
+                    'Image resizing was skipped: '
+                    . $exception->getMessage()
+                );
+            }
+        }
+
+        if (! copy($sourcePath, $temporaryPath)) {
+            throw new RuntimeException(
+                'The uploaded image could not be prepared.'
+            );
         }
     }
 
